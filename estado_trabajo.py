@@ -1,7 +1,6 @@
-# Dentro de tu función handler(event, context):
+# netlify/functions/mi_webhook.py
 import json
-import base64
-# ... (resto del código de la función)
+import base64 # Probablemente no necesario para GET body, pero útil si esperas POST también
 
 def get_info_ticket(ticket):
     # URL del endpoint
@@ -23,40 +22,51 @@ def get_info_ticket(ticket):
     except ValueError:
         return response.text
 
+def handler(event, context):
+    """
+    Función que se activa con la petición HTTP (puede ser GET, POST, etc.).
+    'event' contiene los detalles de la petición HTTP.
+    'context' contiene información del entorno de ejecución.
+    """
 
-try:
-# 1. Acceder al cuerpo
-body = event.get('body', '')
-    # 2. Verificar y decodificar Base64 si es necesario
-if event.get('isBase64Encoded', False):
-    body = base64.b64decode(body).decode('utf-8')
-    # 3. Procesar el cuerpo (ejemplo si es JSON)
-webhook_data = {}
-if body:
-    try:
-        webhook_data = json.loads(body)
-        print("Datos JSON recibidos:", webhook_data) # Verás esto en los logs de Netlify
-        # Ahora puedes usar el diccionario 'webhook_data'
-        # Por ejemplo: nombre = webhook_data.get('nombre_parametro')
-        ticket = webhook_data.get('ticket')
+    print(f"Petición recibida (método: {event.get('httpMethod')})") # Ver en logs
+
+    # --- Lógica para recibir parámetros GET ---
+    # event['queryStringParameters'] es un diccionario con los parámetros de la URL
+    query_params = event.get('queryStringParameters')
+
+    parametros_recibidos = {}
+    if query_params:
+        print("Parámetros GET recibidos:", query_params) # Ver en logs
+        # Puedes acceder a un parámetro específico por su nombre:
+        ticket = query_params.get('ticket')
         info_ticket=get_info_ticket(ticket)
-        # Y hacer algo con 'nombre'
-        # ... tu lógica aquí ...
-        except json.JSONDecodeError:
-        print("Cuerpo no es JSON válido:", body)
-        webhook_data = {"raw_body": body} # Manejar caso donde no es JSON
-    # ... (resto de la lógica y la respuesta)
-    response = {
-    "statusCode": 200,
-    "headers": { "Content-Type": "application/json" },
-    "body": json.dumps({
-        "message": "Webhook procesado",
-        "received_data": info_ticket # Puedes devolver los datos recibidos para confirmación
-    })
-}
-return response
-except Exception as e:
-# ... (manejo de errores)
-pass # Implementa tu manejo de errores real aquí
+
+    # --- Lógica para recibir cuerpo POST (si también esperas POST webhooks) ---
+    # (Mantén esta parte si tu función recibe ambos tipos de peticiones)
+    # ... código para leer event['body'] y decodificar si es necesario ...
+    # ... procesar json.loads() si aplica ...
+    # ... almacenar o usar los datos del body ...
+    # Nota: Una petición GET *puede* tener cuerpo, pero es muy inusual y no recomendado.
+    # Los parámetros se envían en la URL para GET.
+
+    # --- Fin de tu lógica de procesamiento ---
+
+    # Prepara la respuesta
+    response_body = {
+        "message": "Petición recibida!",
+        "method": event.get('httpMethod'),
+        "received_query_params": info_ticket, # Incluir los parámetros recibidos
+        # "received_body": webhook_data # Incluir datos del body si también procesas POST
+    }
+
+    return {
+        "statusCode": 200, # 200 indica éxito
+        "headers": { "Content-Type": "application/json" },
+        "body": json.dumps(response_body)
+    }
+
+    # ... (manejo de errores - similar al ejemplo anterior) ...
+
 
 
