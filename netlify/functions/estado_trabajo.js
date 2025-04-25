@@ -70,7 +70,7 @@ exports.handler = async function(event, context) {
   console.log("Function executed!"); // Esto aparecerá en los logs de Netlify
   const queryParams = event.queryStringParameters ?? {};
   const num_ticket = queryParams.num_ticket ?? 'No especificado';
-  const zohoInfo = await getInfoTicket(num_ticket);
+  const zohoInfo = getInfoTicket(num_ticket);
   const statusCodeToReturn = zohoInfo.status && zohoInfo.status >= 200 && zohoInfo.status < 300 ? 200 : 500;
   console.log("Parámetro 'ticket' recibido:", zohoInfo); // Ver en logs
   return {
