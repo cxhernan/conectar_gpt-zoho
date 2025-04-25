@@ -1,5 +1,5 @@
 # netlify/functions/mi_webhook.py
-#PRUEBA
+#PRUEBA 22
 import json
 import base64 # Probablemente no necesario para GET body, pero útil si esperas POST también
 
