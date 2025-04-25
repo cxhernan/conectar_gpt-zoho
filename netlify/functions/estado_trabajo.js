@@ -78,7 +78,8 @@ exports.handler = async function(event, context) {
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({
       message: "¡Petición recibida y parámetro extraído!",
-      num_ticket: num_ticket 
+      num_ticket: num_ticket, 
+      resp_zoho: zohoInfo
     })
   };
 }
