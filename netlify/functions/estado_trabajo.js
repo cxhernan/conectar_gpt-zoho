@@ -12,9 +12,9 @@ exports.handler = async function(event, context) {
 
   // Extraer el valor del parámetro 'ticket'
   // Usamos ?. para evitar errores si queryParams es null o undefined, y ?? para dar un valor por defecto si 'ticket' no existe
-  const ticketId = queryParams.ticket ?? 'No especificado';
+  const num_ticket = queryParams.num_ticket ?? 'No especificado';
 
-  console.log("Parámetro 'ticket' recibido:", ticketId); // Ver en logs
+  console.log("Parámetro 'ticket' recibido:", num_ticket); // Ver en logs
 
   // Puedes acceder a otros parámetros si los hubiera
   // const otroParam = queryParams.otroNombre;
@@ -31,7 +31,7 @@ exports.handler = async function(event, context) {
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({
       message: "¡Petición recibida y parámetro extraído!",
-      received_ticket_id: ticketId // Devolvemos el valor del ticket que extrajimos
+      num_ticket: num_ticket // Devolvemos el valor del ticket que extrajimos
       // Puedes añadir más datos aquí si tu lógica los genera
     })
   };
